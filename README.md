@@ -1,45 +1,45 @@
 # Virtual-Linux
 
 <p align="center">
-  <img src="docs/screenshot.png" alt="Virtual-Linux native Debian terminal screenshot" width="360">
+  <img src="docs/screenshot.svg" alt="Virtual-Linux native Debian terminal screenshot" width="360">
 </p>
 
 <p align="center">
   <strong>A fast, native, terminal-only Debian 13 environment for Android.</strong><br>
-  No desktop. No WebView. No Android rooting required.
+  No desktop. No WebView. No Android root required.
 </p>
 
 <p align="center">
-  <a href="releases/Virtual-Linux.apk"><strong>Download Virtual-Linux.apk</strong></a>
+  <a href="https://github.com/kalilinux123456789az-ai/virtual-linux/releases"><strong>Download APK / Releases</strong></a>
   · <a href="#install">Install</a>
-  · <a href="#build-from-source">Build from source</a>
+  · <a href="#build-from-source">Build</a>
   · <a href="#frequently-asked-questions">FAQ</a>
 </p>
 
 ## Features
 
-- Real Debian 13 Bash terminal on ARM64 and x86_64 Android.
+- Real Debian 13 Bash terminal for ARM64 and x86_64 Android.
 - Native Android terminal emulator and pseudo-terminal (PTY).
 - Regular `debian` user; virtual root is available through `sudo`.
-- Persistent Bash command history and 2,000-line scrollback.
-- Long-press copy/paste and terminal scrolling.
+- Persistent Bash history and 2,000-line scrollback.
+- Long-press copy/paste and touch scrolling.
 - Volume and pinch controls for terminal font size.
-- Android foreground service for background terminal operation.
-- No desktop environment and no WebView/Xterm.js.
-- Lightweight use of app-private storage and no permanent wake lock.
+- Foreground service for background terminal operation.
+- No desktop, WebView, or Android rooting.
+- App-private storage and no permanent wake lock.
 
-> **Important:** Virtual-Linux does not root the Android phone. PRoot is an app-level Debian environment, not a security sandbox.
+> **PRoot is not a security sandbox.** Virtual root is limited to Debian inside the app and does not grant Android root.
 
 ## Install
 
-### Download APK
+### APK install
 
-1. Download [Virtual-Linux.apk](releases/Virtual-Linux.apk).
-2. Open the APK in Android.
-3. Approve installation from the current browser or file manager if Android asks.
-4. Open **Virtual-Linux**.
-5. Wait for the first Debian setup to finish.
-6. Start typing at the `debian@virtual-linux` prompt.
+1. Open the GitHub **Releases** page.
+2. Download the newest `Virtual-Linux.apk`.
+3. Open the APK in Android.
+4. Approve installation from the browser or file manager if prompted.
+5. Open **Virtual-Linux** and wait for first-time Debian setup.
+6. Use the `debian@virtual-linux` Bash prompt.
 
 ### Install with ADB
 
@@ -47,7 +47,7 @@
 adb install -r Virtual-Linux.apk
 ```
 
-ADB is not required to use the app. Enable **Install unknown apps** only in the app that opens the APK.
+ADB is optional. Android may require **Install unknown apps** permission for the app that opens the APK.
 
 ## Requirements
 
@@ -58,9 +58,7 @@ ADB is not required to use the app. Enable **Install unknown apps** only in the 
 | Storage | At least 180 MB free for setup |
 | Network | Needed for x86_64 setup and package downloads |
 
-## What can it run?
-
-Typical Debian terminal tools work, including:
+## What you can do
 
 ```sh
 sudo apt update
@@ -80,52 +78,44 @@ sudo apt upgrade
 sudo -i
 ```
 
-It does not unlock Android root permissions or provide access to Android system apps that the system normally blocks.
-
 ## Terminal controls
 
 | Action | Control |
 |---|---|
 | Copy/paste | Long-press terminal text |
-| Scroll | Drag or use terminal scrollbar |
+| Scroll | Drag or use the terminal scrollbar |
 | Font size | Volume up/down or pinch zoom |
-| Command history | Bash `history` or up/down arrows |
+| History | Bash `history` or up/down arrows |
 | Virtual root | `sudo <command>` or `sudo -i` |
 | Stop terminal | Notification **Stop** action |
 
-## Storage and performance
+## Storage and limits
 
-- Debian is stored in Android app-private storage; it has no fixed virtual-disk limit apart from available phone storage.
-- Packages and files remain until the app data is cleared or the app is uninstalled.
-- Scrollback is limited to 2,000 lines to reduce low-end phone memory use.
-- The foreground service keeps Debian running in the background without a permanent wake lock.
-- Android battery optimization may still stop background apps; allow the app to remain active in Android settings if required.
+Debian is stored in Android app-private storage. Available phone storage determines how much Debian, packages and files can grow. Clear app data or uninstall to remove Debian.
 
-## `/proc`, `htop`, and hardware limitations
-
-Android blocks access to some system-wide `/proc` files. Virtual-Linux supplies readable compatibility files for tools such as `htop`. Memory information is live; CPU counters and visible process lists are approximate under Android restrictions.
+Android limits direct access to some global `/proc`, process and hardware data. The app supplies compatibility files for tools such as `htop`; memory values are live, while CPU counters and process visibility are approximate.
 
 ## Frequently asked questions
 
-### Does it require a rooted Nokia G22 or another phone?
+### Does it require a rooted phone?
 
-No. It uses PRoot and runs entirely as the Android app's normal user.
+No. It uses PRoot and a normal Android app process.
 
-### Does `sudo` ask for an Android password?
+### Does `sudo` need an Android password?
 
 No. `sudo` grants virtual root inside Debian only.
 
-### Is it a desktop environment?
+### Is this a desktop environment?
 
-No. It opens directly into a Bash terminal.
+No. It opens directly into Bash.
 
-### Why can WebView not be used?
+### Does it use WebView or xterm.js?
 
-It is not used: the app uses a native Android terminal view and emulator.
+No. It uses the native Android terminal view and emulator with a Debian PTY.
 
-### Why can some system tools lack permissions?
+### Can it run htop, gcc, pip and apt?
 
-Android intentionally restricts `/proc`, process, network, and hardware access outside Android apps. Debian tools are still subject to those restrictions.
+Yes, subject to Android's normal permission restrictions. Debian packages can be installed with `sudo apt`.
 
 ## Build from source
 
@@ -133,43 +123,38 @@ Requirements:
 
 - Linux or macOS
 - Android SDK API 35 and Build Tools 35.0.0
-- JDK 21 or another JDK containing `javac` and `keytool`
+- JDK 21 or another JDK providing `javac` and `keytool`
 
 ```sh
 ANDROID_SDK_ROOT="$HOME/Android/Sdk" ./build.sh
 ```
 
-The APK is written to:
+The signed APK is written to `app/build/outputs/apk/Virtual-Linux.apk`.
 
-```text
-app/build/outputs/apk/Virtual-Linux.apk
-```
-
-The build creates a local debug keystore. Use a separate release keystore for public store releases.
+The build script creates a local debug keystore; use a separate release keystore for store distribution.
 
 ## Troubleshooting
 
 - **Setup cannot finish:** keep at least 180 MB free and restart setup.
-- **Nokia G22 copy/paste:** long-press terminal text and use Android selection controls.
-- **Slow terminal:** reduce terminal font size with volume down or pinch zoom.
-- **Permission error:** run the command with `sudo` if it only changes Debian files.
-- **App stops in background:** disable battery optimization for Virtual-Linux in Android settings.
-- **Package list old:** run `sudo apt update` before installing packages.
+- **Copy/paste:** long-press terminal text and use Android selection controls.
+- **Slow terminal:** reduce font size with volume down or pinch zoom.
+- **Permission error:** use `sudo` only for Debian operations.
+- **App stops in background:** allow Virtual-Linux in Android battery settings.
+- **Package list old:** run `sudo apt update`.
 
-## Project files
+## Project layout
 
 ```text
-app/src/main/java/com/virtuallinux/  Android activity and service
-app/src/main/java/com/termux/        Native terminal implementation
-app/src/main/res/                    Launcher, notification and selection assets
+app/src/main/java/com/virtuallinux/  Android activity and foreground service
+app/src/main/java/com/termux/        Native terminal emulator and view
 app/src/main/assets/rootfs/          ARM64 Debian root filesystem
-app/src/main/assets/runtime/         PRoot runtimes
-docs/screenshot.png                  Example terminal screenshot
-releases/Virtual-Linux.apk           Public APK copy
-build.sh                             Build and package script
+app/src/main/assets/runtime/         PRoot ARM64/x86_64 runtimes
+app/src/main/res/                    Android icons and resources
+docs/screenshot.svg                  Terminal example image
+build.sh                             APK build and verification script
 THIRD_PARTY_NOTICES.txt              Dependencies and licenses
 ```
 
-## Licenses
+## Dependencies and licenses
 
-Debian and third-party runtime components retain their upstream licenses. License texts and source locations are listed in [THIRD_PARTY_NOTICES.txt](THIRD_PARTY_NOTICES.txt).
+Debian and third-party components keep their upstream licenses. Sources and license texts are recorded in [THIRD_PARTY_NOTICES.txt](THIRD_PARTY_NOTICES.txt).
